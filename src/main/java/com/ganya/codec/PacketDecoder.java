@@ -17,6 +17,7 @@ public class PacketDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List out) {
+        //将数据传递到链表的下一个节点
         out.add(PacketCodeC.INSTANCE.decode(in));
     }
 }

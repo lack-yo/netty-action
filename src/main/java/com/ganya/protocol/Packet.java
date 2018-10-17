@@ -1,6 +1,7 @@
 package com.ganya.protocol;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import lombok.Data;
 
 /**
  * 自定义协议，包
@@ -8,23 +9,16 @@ import com.alibaba.fastjson.annotation.JSONField;
  * @author loufeng
  * @date 2018/10/17 2:24 PM
  */
+@Data
 public abstract class Packet {
     /**
-     * 协议版本号
+     * 协议版本号，在序列化与反序列化中忽略
      */
     @JSONField(deserialize = false, serialize = false)
     private Byte version = 1;
 
-    public Byte getVersion() {
-        return version;
-    }
-
-    public void setVersion(Byte version) {
-        this.version = version;
-    }
-
     /**
-     * 获取包中command
+     * 获取包中指令，在序列化中忽略
      *
      * @return command
      */

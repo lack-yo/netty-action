@@ -5,11 +5,16 @@ import com.ganya.client.handler.MessageResponseHandler;
 import com.ganya.codec.PacketDecoder;
 import com.ganya.codec.PacketEncoder;
 import com.ganya.codec.Spliter;
+import com.ganya.protocol.request.MessageRequestPacket;
+import com.ganya.util.LoginUtil;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+
+import java.util.Scanner;
 
 /**
  * 模拟Client
@@ -30,9 +35,9 @@ public class Client {
         bootstrap
                 .group(workerGroup)
                 .channel(NioSocketChannel.class)
-                .handler(new ChannelInitializer<SocketChannel>() {
+                .handler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
-                    public void initChannel(SocketChannel ch) {
+                    public void initChannel(NioSocketChannel ch) {
                         //读写处理
                         ch.pipeline().addLast(new Spliter());
                         ch.pipeline().addLast(new PacketDecoder());
@@ -49,6 +54,9 @@ public class Client {
         bootstrap.connect("127.0.0.1", 8000).addListener(future -> {
             if (future.isSuccess()) {
                 System.out.println("连接成功!");
+                Channel channel = ((ChannelFuture) future).channel();
+                //控制台
+                console(channel);
             } else {
                 int tryCount = MAX_RETRY - retry;
                 if (tryCount > 0) {
@@ -64,6 +72,21 @@ public class Client {
             }
 
         });
+    }
+
+    private static void console(Channel channel) {
+        //启动控制台
+        new Thread(() -> {
+            while (!Thread.interrupted()) {
+                if (LoginUtil.hasLogin(channel)) {
+                    System.out.println("输入消息发送至服务端: ");
+                    Scanner sc = new Scanner(System.in);
+                    String line = sc.nextLine();
+
+                    channel.writeAndFlush(new MessageRequestPacket(line));
+                }
+            }
+        }).start();
     }
 
 }

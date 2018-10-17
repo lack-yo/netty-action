@@ -2,15 +2,19 @@ package com.ganya.protocol.request;
 
 import com.ganya.protocol.Packet;
 import com.ganya.protocol.command.Command;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * @author loufeng
  * @date 2018/10/17 2:43 PM
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class MessageRequestPacket extends Packet {
     private String msg;
 
